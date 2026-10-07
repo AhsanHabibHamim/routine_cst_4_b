@@ -8,7 +8,7 @@ index.html  routine.json  manifest.webmanifest  sw.js
 icons/  scripts/schedule-alerts.mjs  .github/workflows/class-alerts.yml
 ```
 `routine.json` is the single source for both the app and the alert script. Edit it to change the routine,
-then bump the version in `sw.js` (`cst-matrix-v2` → `v3`) so phones pick up the update.
+then bump the version in `sw.js` (`cst-matrix-v3` → `v4`) so phones pick up the update.
 
 ## 1. Go live (GitHub Pages)
 Push everything to `main` → Settings → Pages → Deploy from a branch → `main` / root.
