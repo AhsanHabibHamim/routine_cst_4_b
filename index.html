@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>CST Class Matrix — Sem 4</title>
+    <meta
+      name="description"
+      content="Offline class routine · Computer Technology · 4th Semester · Group B"
+    />
+    <meta name="theme-color" content="#04070f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="CST Routine" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/favicon.png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <style>
+      :root {
+        --bg: #04070f;
+        --pn: #0a1220;
+        --tx: #d4ebff;
+        --mut: #6a86a6;
+        --ln: #12304a;
+        --cy: #00e5ff;
+        --mg: #ff2bd6;
+        --gr: #39ff88;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        color: var(--tx);
+        background: var(--bg);
+        font:
+          14px/1.45 ui-monospace,
+          "SF Mono",
+          "Cascadia Mono",
+          Menlo,
+          Consolas,
+          monospace;
+        padding: max(18px, env(safe-area-inset-top))
+          max(14px, env(safe-area-inset-right))
+          max(36px, env(safe-area-inset-bottom))
+          max(14px, env(safe-area-inset-left));
+        overflow-x: hidden;
+      }
+      #fx {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            800px 480px at 10% -8%,
+            rgba(0, 229, 255, 0.17),
+            transparent 60%
+          ),
+          radial-gradient(
+            760px 480px at 100% 0,
+            rgba(255, 43, 214, 0.14),
+            transparent 60%
+          ),
+          linear-gradient(rgba(18, 48, 74, 0.55) 1px, transparent 1px) 0 0/38px
+            38px,
+          linear-gradient(90deg, rgba(18, 48, 74, 0.55) 1px, transparent 1px) 0
+            0/38px 38px;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.16) 0 1px,
+          transparent 1px 3px
+        );
+      }
+      :focus-visible {
+        outline: 2px solid var(--gr);
+        outline-offset: 2px;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      .wrap {
+        position: relative;
+        z-index: 2;
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+      /* header */
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        color: var(--mut);
+        font-size: 12px;
+      }
+      .boot {
+        color: var(--gr);
+      }
+      .boot::after {
+        content: "▌";
+        animation: bl 1s steps(2) infinite;
+      }
+      @keyframes bl {
+        50% {
+          opacity: 0;
+        }
+      }
+      .sys {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .pill {
+        padding: 4px 10px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        box-shadow: inset 0 0 0 1px var(--ln);
+        color: var(--mut);
+        clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+      }
+      .pill.ok {
+        color: var(--gr);
+        box-shadow: inset 0 0 0 1px rgba(57, 255, 136, 0.5);
+      }
+      .pill.off {
+        color: #ffb020;
+        box-shadow: inset 0 0 0 1px rgba(255, 176, 32, 0.6);
+      }
+      #inst {
+        color: var(--bg);
+        background: var(--cy);
+        font-weight: 700;
+        padding: 5px 14px;
+        clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        box-shadow: 0 0 20px var(--cy);
+      }
+      #inst[hidden] {
+        display: none;
+      }
+      h1 {
+        margin: 14px 0 4px;
+        font:
+          800 clamp(30px, 8vw, 64px)/1 "Segoe UI",
+          system-ui,
+          sans-serif;
+        letter-spacing: 0.12em;
+        color: var(--cy);
+        text-shadow: 0 0 24px rgba(0, 229, 255, 0.6);
+        position: relative;
+        width: max-content;
+        max-width: 100%;
+      }
+      h1 span {
+        color: var(--mg);
+        text-shadow: 0 0 24px rgba(255, 43, 214, 0.6);
+      }
+      h1::before,
+      h1::after {
+        content: attr(data-t);
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+      h1::before {
+        color: var(--mg);
+        animation: gl 7s infinite;
+      }
+      h1::after {
+        color: var(--gr);
+        animation: gl 7s 0.12s infinite;
+      }
+      @keyframes gl {
+        0%,
+        93%,
+        100% {
+          opacity: 0;
+          transform: none;
+        }
+        94% {
+          opacity: 0.8;
+          transform: translate(-4px, 1px);
+          clip-path: inset(20% 0 55% 0);
+        }
+        96% {
+          opacity: 0.8;
+          transform: translate(4px, -1px);
+          clip-path: inset(60% 0 12% 0);
+        }
+        98% {
+          opacity: 0;
+        }
+      }
+      .meta {
+        color: var(--mut);
+        margin-bottom: 18px;
+        max-width: 70ch;
+      }
+      .meta b {
+        color: var(--tx);
+        font-weight: 400;
+      }
+      /* HUD cards */
+      .hud {
+        position: relative;
+        background: rgba(10, 18, 32, 0.82);
+        backdrop-filter: blur(6px);
+        padding: 16px;
+        box-shadow:
+          inset 0 0 0 1px var(--ln),
+          0 0 44px rgba(0, 229, 255, 0.08);
+      }
+      .hud::before,
+      .hud::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--cy);
+        filter: drop-shadow(0 0 5px var(--cy));
+      }
+      .hud::before {
+        top: -2px;
+        left: -2px;
+        border-right: 0;
+        border-bottom: 0;
+      }
+      .hud::after {
+        bottom: -2px;
+        right: -2px;
+        border-left: 0;
+        border-top: 0;
+      }
+      .now {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .lbl {
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        color: var(--mut);
+      }
+      .big {
+        font:
+          700 clamp(20px, 3.6vw, 30px)/1.15 "Segoe UI",
+          system-ui,
+          sans-serif;
+        margin: 6px 0;
+        color: var(--tx);
+      }
+      .live .big {
+        color: var(--gr);
+        text-shadow: 0 0 16px rgba(57, 255, 136, 0.55);
+      }
+      .live .lbl {
+        color: var(--gr);
+      }
+      .clk {
+        font-size: clamp(26px, 5vw, 40px);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--cy);
+        text-shadow: 0 0 14px rgba(0, 229, 255, 0.6);
+      }
+      .bar {
+        height: 8px;
+        background: rgba(0, 229, 255, 0.1);
+        margin-top: 12px;
+        position: relative;
+        clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      }
+      .bar i {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        background: linear-gradient(90deg, var(--cy), var(--gr));
+        box-shadow: 0 0 14px var(--gr);
+        transition: width 1s linear;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--mut);
+      }
+      .row b {
+        color: var(--tx);
+        font-weight: 400;
+      }
+      /* legend */
+      .lg {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 14px;
+      }
+      .lg button {
+        --h: 180;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: hsl(var(--h) 100% 78%);
+        background: hsl(var(--h) 100% 55%/0.1);
+        box-shadow: inset 0 0 0 1px hsl(var(--h) 100% 60%/0.5);
+        clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+        transition: 0.15s;
+      }
+      .lg button[aria-pressed="true"] {
+        background: hsl(var(--h) 100% 55%/0.35);
+        box-shadow:
+          inset 0 0 0 1px hsl(var(--h) 100% 70%),
+          0 0 18px hsl(var(--h) 100% 55%/0.5);
+      }
+      /* matrix */
+      #mx {
+        overflow: hidden;
+      }
+      table {
+        border-collapse: separate;
+        border-spacing: 6px;
+        width: 100%;
+        table-layout: fixed;
+      }
+      th.p {
+        font-weight: 400;
+        padding: 8px 2px;
+        color: var(--cy);
+        font-size: 12px;
+        border-bottom: 1px solid rgba(0, 229, 255, 0.35);
+      }
+      th.p small {
+        display: block;
+        color: var(--mut);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+      }
+      th.p.now {
+        color: var(--gr);
+        border-color: var(--gr);
+        text-shadow: 0 0 10px var(--gr);
+      }
+      th.cr {
+        width: 118px;
+        text-align: left;
+        color: var(--mut);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        font-weight: 400;
+      }
+      th.d {
+        text-align: left;
+        padding: 0 10px;
+        font:
+          800 15px "Segoe UI",
+          system-ui,
+          sans-serif;
+        letter-spacing: 0.16em;
+        border-left: 3px solid var(--cy);
+        background: linear-gradient(
+          90deg,
+          rgba(0, 229, 255, 0.14),
+          transparent
+        );
+      }
+      th.d small {
+        display: block;
+        font:
+          400 10px ui-monospace,
+          monospace;
+        color: var(--mut);
+        letter-spacing: 0.14em;
+      }
+      th.d.today {
+        border-color: var(--gr);
+        color: var(--gr);
+        background: linear-gradient(
+          90deg,
+          rgba(57, 255, 136, 0.22),
+          transparent
+        );
+        text-shadow: 0 0 12px var(--gr);
+      }
+      td {
+        height: 82px;
+        padding: 0;
+      }
+      td.c {
+        --h: 180;
+        padding: 8px;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 1.25;
+        color: hsl(var(--h) 100% 80%);
+        background: linear-gradient(
+          135deg,
+          hsl(var(--h) 100% 55%/0.15),
+          hsl(var(--h) 100% 55%/0.04)
+        );
+        box-shadow:
+          inset 0 0 0 1px hsl(var(--h) 100% 60%/0.6),
+          inset 0 0 22px hsl(var(--h) 100% 55%/0.12);
+        clip-path: polygon(
+          10px 0,
+          100% 0,
+          100% calc(100% - 10px),
+          calc(100% - 10px) 100%,
+          0 100%,
+          0 10px
+        );
+        transition:
+          opacity 0.2s,
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
+      td.c:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          inset 0 0 0 1px hsl(var(--h) 100% 70%),
+          inset 0 0 30px hsl(var(--h) 100% 55%/0.32);
+      }
+      td.c i,
+      .ar i {
+        display: block;
+        font:
+          normal 700 15px ui-monospace,
+          monospace;
+        opacity: 0.85;
+        margin-bottom: 2px;
+      }
+      td.e {
+        text-align: center;
+        color: var(--ln);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        background: repeating-linear-gradient(
+          135deg,
+          transparent 0 6px,
+          rgba(18, 48, 74, 0.7) 6px 7px
+        );
+      }
+      .dim {
+        opacity: 0.18;
+        filter: saturate(0.4);
+      }
+      .live-c {
+        animation: pl 1.6s ease-in-out infinite;
+      }
+      @keyframes pl {
+        50% {
+          box-shadow:
+            inset 0 0 0 2px var(--gr),
+            inset 0 0 34px rgba(57, 255, 136, 0.45);
+        }
+      }
+      /* agenda (phones) */
+      #ag {
+        display: none;
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .tabs button {
+        flex: 1;
+        padding: 10px 0;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--mut);
+        box-shadow: inset 0 0 0 1px var(--ln);
+        clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+      }
+      .tabs button[aria-selected="true"] {
+        color: var(--bg);
+        background: var(--cy);
+        box-shadow: 0 0 18px var(--cy);
+      }
+      .tabs button.td:not([aria-selected="true"]) {
+        color: var(--gr);
+        box-shadow: inset 0 0 0 1px var(--gr);
+      }
+      .ar {
+        --h: 180;
+        display: grid;
+        grid-template-columns: 78px 1fr;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 12px;
+        color: hsl(var(--h) 100% 80%);
+        background: linear-gradient(
+          135deg,
+          hsl(var(--h) 100% 55%/0.15),
+          hsl(var(--h) 100% 55%/0.04)
+        );
+        box-shadow: inset 0 0 0 1px hsl(var(--h) 100% 60%/0.55);
+        clip-path: polygon(
+          10px 0,
+          100% 0,
+          100% calc(100% - 10px),
+          calc(100% - 10px) 100%,
+          0 100%,
+          0 10px
+        );
+        font-weight: 700;
+        transition: opacity 0.2s;
+      }
+      .ar .t {
+        font-size: 12px;
+        color: var(--tx);
+        font-weight: 400;
+        line-height: 1.5;
+      }
+      .ar .t b {
+        display: block;
+        font-size: 15px;
+        color: hsl(var(--h) 100% 80%);
+      }
+      .ar.fr {
+        --h: 210;
+        opacity: 0.55;
+        color: var(--mut);
+        background: repeating-linear-gradient(
+          135deg,
+          transparent 0 6px,
+          rgba(18, 48, 74, 0.6) 6px 7px
+        );
+        box-shadow: inset 0 0 0 1px var(--ln);
+        font-weight: 400;
+      }
+      .ar.fr .t b {
+        color: var(--mut);
+        font-weight: 400;
+      }
+      .off-day {
+        text-align: center;
+        padding: 26px 10px;
+        color: var(--mut);
+      }
+      .al {
+        margin-bottom: 18px;
+      }
+      .al p {
+        margin: 6px 0 12px;
+        color: var(--mut);
+      }
+      .alb {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .ab {
+        padding: 10px 20px;
+        font-weight: 700;
+        color: var(--bg);
+        background: var(--gr);
+        clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+        box-shadow: 0 0 18px var(--gr);
+      }
+      .ab.ghost {
+        color: var(--cy);
+        background: rgba(0, 229, 255, 0.1);
+        box-shadow: inset 0 0 0 1px var(--cy);
+      }
+      .ab[hidden] {
+        display: none;
+      }
+      .foot {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        color: var(--mut);
+      }
+      @media (max-width: 820px) {
+        #mx {
+          display: none;
+        }
+        #ag {
+          display: block;
+        }
+        .now {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <main class="wrap">
+      <div class="top">
+        <span class="boot"
+          >&gt; boot class_matrix --dept=CST --sem=4 ... OK</span
+        >
+        <span class="sys"
+          ><button id="inst" hidden>Install app</button
+          ><span class="pill ok" id="net">ONLINE</span></span
+        >
+      </div>
+      <h1 data-t="CLASS MATRIX">CLASS <span>MATRIX</span></h1>
+      <p class="meta">
+        <b>Computer Technology</b> · 4th Semester · Group B · 2nd Shift · 28
+        periods a week · classes started 27 Sep 2026 ·
+        <b>Dhaka Govt. Polytechnic Institute</b>
+      </p>
+
+      <section class="now" aria-live="polite">
+        <div class="hud" id="nw"></div>
+        <div class="hud" id="nx"></div>
+      </section>
+
+      <section class="hud al" aria-label="Class alerts">
+        <div class="lbl">CLASS ALERTS</div>
+        <p id="alst"></p>
+        <div class="lg" id="alc" role="group" aria-label="Alert types"></div>
+        <div class="alb">
+          <button class="ab" id="alon">Enable alerts</button
+          ><button class="ab ghost" id="alt" hidden>Send test alert</button>
+        </div>
+      </section>
+
+      <div
+        class="lg"
+        id="lg"
+        role="group"
+        aria-label="Highlight a subject"
+      ></div>
+
+      <div class="hud" id="mx"><table id="tb"></table></div>
+      <div class="hud" id="ag">
+        <div class="tabs" id="tabs" role="tablist"></div>
+        <div id="ar"></div>
+      </div>
+
+      <p class="foot">
+        // tap a subject to light it up across the week · works offline once
+        installed //
+      </p>
+      <p class="foot" id="ios" hidden>
+        iPhone: tap Share, then “Add to Home Screen” to install.
+      </p>
+    </main>
+    <script>
+      let S, D, R, SL, T0, PL;
+      const hm = (m) => {
+        let h = Math.floor(m / 60),
+          n = m % 60;
+        return (h > 12 ? h - 12 : h) + ":" + String(n).padStart(2, "0");
+      };
+      const rg = (a, b) => hm(a) + " – " + hm(b);
+      const pad = (n) => String(n).padStart(2, "0");
+      const $ = (id) => document.getElementById(id);
+      let sel = -1,
+        tab = 0;
+      function nowInfo() {
+        const d = new Date(),
+          dw = d.getDay(),
+          ms = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+        return { d, dw, ms };
+      }
+      // legend
+      function legend() {
+        $("lg").innerHTML = S.map(
+          (s, i) =>
+            `<button style="--h:${s[2]}" data-k="${i}" aria-pressed="false">${s[1]} ${s[0]}</button>`,
+        ).join("");
+        $("lg").onclick = (e) => {
+          const b = e.target.closest("button");
+          if (b) pick(+b.dataset.k);
+        };
+      }
+      function pick(k) {
+        sel = sel === k ? -1 : k;
+        document
+          .querySelectorAll("#lg button")
+          .forEach((b) => b.setAttribute("aria-pressed", +b.dataset.k === sel));
+        document
+          .querySelectorAll("[data-k]:not(button)")
+          .forEach((c) =>
+            c.classList.toggle("dim", sel > -1 && +c.dataset.k !== sel),
+          );
+      }
+      // matrix
+      function build() {
+        let h =
+          '<tr><th class="cr">DAY ╲ TIME</th>' +
+          Array.from(
+            { length: 7 },
+            (_, i) =>
+              `<th class="p" data-p="${i}">${rg(T0 + i * PL, T0 + (i + 1) * PL)}<small>P${i + 1}</small></th>`,
+          ).join("") +
+          "</tr>";
+        D.forEach((d, r) => {
+          h += `<tr><th class="d" data-r="${r}">${d[0]}<small>${d[1]}</small></th>`;
+          let p = 0;
+          while (p < 7) {
+            const c = SL[r].find((x) => x.p === p);
+            if (c) {
+              h += `<td class="c" colspan="${c.n}" data-k="${c.k}" data-r="${r}" data-a="${c.a}" data-b="${c.b}" title="${S[c.k][3]}" style="--h:${S[c.k][2]}"><i>${S[c.k][1]}</i>${S[c.k][0].replace("&", "&amp;")}</td>`;
+              p += c.n;
+            } else {
+              h += '<td class="e">//</td>';
+              p++;
+            }
+          }
+          h += "</tr>";
+        });
+        $("tb").innerHTML = h;
+        $("tb").onclick = (e) => {
+          const c = e.target.closest("td.c");
+          if (c) pick(+c.dataset.k);
+        };
+      }
+      // agenda
+      function tabs() {
+        $("tabs").innerHTML = D.map(
+          (d, i) =>
+            `<button role="tab" data-i="${i}" aria-selected="${i === tab}">${d[0]}</button>`,
+        ).join("");
+        $("tabs").onclick = (e) => {
+          const b = e.target.closest("button");
+          if (b) {
+            tab = +b.dataset.i;
+            tabs();
+            agenda();
+            tick();
+          }
+        };
+        mark();
+      }
+      function agenda() {
+        let h = "",
+          p = 0;
+        const L = SL[tab];
+        while (p < 7) {
+          const c = L.find((x) => x.p === p);
+          if (c) {
+            h += `<div class="ar" data-k="${c.k}" data-r="${tab}" data-a="${c.a}" data-b="${c.b}" title="${S[c.k][3]}" style="--h:${S[c.k][2]}"><div><i>${S[c.k][1]}</i></div><div class="t"><b>${S[c.k][0].replace("&", "&amp;")}</b>${rg(c.a, c.b)} · ${c.n} period${c.n > 1 ? "s" : ""}<br>${S[c.k][3]}</div></div>`;
+            p += c.n;
+          } else {
+            let q = p;
+            while (q < 7 && !L.find((x) => x.p === q)) q++;
+            h += `<div class="ar fr"><div><i>//</i></div><div class="t"><b>Free</b>${rg(T0 + p * PL, T0 + q * PL)}</div></div>`;
+            p = q;
+          }
+        }
+        $("ar").innerHTML = h;
+        if (sel > -1) (pick(sel), pick(sel));
+      }
+      function mark() {
+        const dw = new Date().getDay();
+        document
+          .querySelectorAll("#tabs button")
+          .forEach((b) => b.classList.toggle("td", +b.dataset.i === dw));
+      }
+      // live panels
+      function tick() {
+        const { d, dw, ms } = nowInfo();
+        let cur = null;
+        if (dw < 5) cur = SL[dw].find((x) => ms >= x.a && ms < x.b) || null;
+        let nx = null,
+          off = 0;
+        for (let o = 0; o < 8 && !nx; o++) {
+          const day = (dw + o) % 7;
+          if (day > 4) continue;
+          nx = SL[day].find((x) => o > 0 || x.a > ms);
+          if (nx) {
+            off = o;
+            nx = { ...nx, day };
+          }
+        }
+        $("nw").className = "hud" + (cur ? " live" : "");
+        if (cur) {
+          const pr = (ms - cur.a) / (cur.b - cur.a),
+            left = Math.ceil((cur.b - ms) * 60),
+            m = Math.floor(left / 60);
+          $("nw").innerHTML =
+            `<div class="lbl">● IN SESSION</div><div class="big">${S[cur.k][1]} ${S[cur.k][0].replace("&", "&amp;")}</div><div class="row"><b>${rg(cur.a, cur.b)}</b><span>ends in <b>${pad(m)}:${pad(left % 60)}</b></span></div><div class="row"><span>with <b>${S[cur.k][3]}</b></span></div><div class="bar"><i style="width:${(pr * 100).toFixed(1)}%"></i></div>`;
+        } else
+          $("nw").innerHTML =
+            `<div class="lbl">STANDBY</div><div class="big">No class right now</div><div class="clk">${hm(d.getHours() * 60 + d.getMinutes())}:${pad(d.getSeconds())}</div>`;
+        if (nx) {
+          const w = Math.max(0, Math.round((off * 1440 + (nx.a - ms)) * 60)),
+            dd = Math.floor(w / 86400),
+            hh = Math.floor((w % 86400) / 3600),
+            mm = Math.floor((w % 3600) / 60),
+            ss = w % 60;
+          const cd = dd
+            ? `${dd}d ${hh}h`
+            : hh
+              ? `${hh}h ${pad(mm)}m`
+              : `${pad(mm)}:${pad(ss)}`;
+          const dn =
+            off === 0 ? "TODAY" : off === 1 ? "TOMORROW" : D[nx.day][1];
+          $("nx").innerHTML =
+            `<div class="lbl">NEXT UP · ${dn}</div><div class="big" style="font-size:clamp(17px,2.6vw,22px)">${S[nx.k][1]} ${S[nx.k][0].replace("&", "&amp;")}</div><div class="row"><b>${rg(nx.a, nx.b)}</b><span>${S[nx.k][3]}</span></div><div class="clk" style="margin-top:6px">${cd}</div>`;
+        }
+        // highlight live cells, current day and period
+        document
+          .querySelectorAll("[data-a]")
+          .forEach((c) =>
+            c.classList.toggle(
+              "live-c",
+              +c.dataset.r === dw && ms >= +c.dataset.a && ms < +c.dataset.b,
+            ),
+          );
+        document.querySelectorAll("th.d").forEach((t) => {
+          const on = +t.dataset.r === dw;
+          t.classList.toggle("today", on);
+          t.querySelector("small").textContent =
+            D[+t.dataset.r][1] + (on ? " ● TODAY" : "");
+        });
+        document.querySelectorAll("th.p").forEach((t) => {
+          const a = T0 + +t.dataset.p * PL;
+          t.classList.toggle("now", dw < 5 && ms >= a && ms < a + PL);
+        });
+      }
+      // connection + install
+      function net() {
+        const o = navigator.onLine;
+        $("net").textContent = o ? "ONLINE" : "OFFLINE · CACHED";
+        $("net").className = "pill " + (o ? "ok" : "off");
+      }
+      addEventListener("online", net);
+      addEventListener("offline", net);
+      net();
+      let dp;
+      addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        dp = e;
+        $("inst").hidden = false;
+      });
+      $("inst").onclick = async () => {
+        if (!dp) return;
+        dp.prompt();
+        await dp.userChoice;
+        dp = null;
+        $("inst").hidden = true;
+      };
+      addEventListener("appinstalled", () => ($("inst").hidden = true));
+      if (/iphone|ipad/i.test(navigator.userAgent) && !navigator.standalone)
+        $("ios").hidden = false;
+      if ("serviceWorker" in navigator)
+        addEventListener("load", () =>
+          navigator.serviceWorker.register("sw.js").catch(() => {}),
+        );
+      // background: drifting node network
+      (function () {
+        const cv = $("fx"),
+          x = cv.getContext("2d");
+        let W,
+          H,
+          N = [];
+        const rm = matchMedia("(prefers-reduced-motion:reduce)").matches;
+        function sz() {
+          const r = devicePixelRatio || 1;
+          W = cv.width = innerWidth * r;
+          H = cv.height = innerHeight * r;
+          x.setTransform(r, 0, 0, r, 0, 0);
+          N = Array.from(
+            { length: Math.min(70, Math.floor(innerWidth / 16)) },
+            () => ({
+              x: Math.random() * innerWidth,
+              y: Math.random() * innerHeight,
+              vx: (Math.random() - 0.5) * 0.35,
+              vy: (Math.random() - 0.5) * 0.35,
+            }),
+          );
+        }
+        function f() {
+          x.clearRect(0, 0, innerWidth, innerHeight);
+          for (const a of N) {
+            if (!rm) {
+              a.x += a.vx;
+              a.y += a.vy;
+              if (a.x < 0 || a.x > innerWidth) a.vx *= -1;
+              if (a.y < 0 || a.y > innerHeight) a.vy *= -1;
+            }
+            x.fillStyle = "rgba(0,229,255,.7)";
+            x.fillRect(a.x - 1, a.y - 1, 2, 2);
+            for (const b of N) {
+              const dx = a.x - b.x,
+                dy = a.y - b.y,
+                q = dx * dx + dy * dy;
+              if (q < 16000 && a < b) {
+                x.strokeStyle = `rgba(0,229,255,${0.16 * (1 - q / 16000)})`;
+                x.beginPath();
+                x.moveTo(a.x, a.y);
+                x.lineTo(b.x, b.y);
+                x.stroke();
+              }
+            }
+          }
+          if (!rm) requestAnimationFrame(f);
+        }
+        addEventListener("resize", sz);
+        sz();
+        f();
+      })();
+      // class alerts (local notifications while the app is open or running in the background)
+      const LEAD = 5,
+        AE = [
+          ["pre", "Before start"],
+          ["start", "At start"],
+          ["preEnd", "Before end"],
+          ["end", "At end"],
+        ],
+        done = new Set();
+      let AL = { pre: 1, start: 1, preEnd: 1, end: 1 },
+        lastT = Date.now();
+      try {
+        Object.assign(AL, JSON.parse(localStorage.getItem("cst-al") || "{}"));
+      } catch (e) {}
+      const sv = () => {
+        try {
+          localStorage.setItem("cst-al", JSON.stringify(AL));
+        } catch (e) {}
+      };
+      const can = () => "Notification" in window;
+      function alerts() {
+        $("alc").innerHTML = AE.map(
+          ([k, l]) =>
+            `<button style="--h:${k[0] === "p" ? 50 : 160}" data-e="${k}" aria-pressed="${!!AL[k]}">${l}${k[0] === "p" ? " · " + LEAD + " min" : ""}</button>`,
+        ).join("");
+        $("alc").onclick = (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          const k = b.dataset.e;
+          AL[k] = AL[k] ? 0 : 1;
+          b.setAttribute("aria-pressed", !!AL[k]);
+          sv();
+        };
+        $("alon").onclick = async () => {
+          if (can()) {
+            await Notification.requestPermission();
+            alst();
+          }
+        };
+        $("alt").onclick = () =>
+          show(
+            "CST Class Matrix",
+            "Test alert. Class alerts will look like this.",
+            "test",
+          );
+        alst();
+      }
+      function alst() {
+        let t;
+        const g = can() && Notification.permission === "granted";
+        if (!can())
+          t =
+            "This browser can't show notifications. On iPhone, add the app to your Home Screen first, then open it from there.";
+        else if (g)
+          t =
+            "Alerts are on. They fire while the app is open or running in the background.";
+        else if (Notification.permission === "denied")
+          t =
+            "Alerts are blocked. Allow notifications for this site in your browser settings.";
+        else
+          t =
+            "Get a notification before each class, when it starts, before it ends, and when it ends, with the teacher's name.";
+        $("alst").textContent = t;
+        $("alon").hidden = g || !can();
+        $("alt").hidden = !g;
+      }
+      async function show(title, body, tag) {
+        if (!can() || Notification.permission !== "granted") return;
+        const o = {
+          body,
+          tag,
+          icon: "icons/icon-192.png",
+          badge: "icons/favicon.png",
+          vibrate: [150, 80, 150],
+          renotify: true,
+        };
+        try {
+          const r = await navigator.serviceWorker.ready;
+          await r.showNotification(title, o);
+        } catch (e) {
+          new Notification(title, o);
+        }
+      }
+      function fire() {
+        const now = Date.now(),
+          from = Math.max(lastT, now - 90000);
+        lastT = now;
+        if (!can() || Notification.permission !== "granted") return;
+        for (let o = 0; o < 2; o++) {
+          const day = new Date();
+          day.setHours(0, 0, 0, 0);
+          day.setDate(day.getDate() + o);
+          const dw = day.getDay();
+          if (dw > 4) continue;
+          SL[dw].forEach((s, i) => {
+            const n = S[s.k],
+              tm = rg(s.a, s.b),
+              nx = SL[dw].find((x) => x.a >= s.b),
+              nn = nx && S[nx.k],
+              back = SL[dw][i - 1] && SL[dw][i - 1].b === s.a,
+              at = (m) => day.getTime() + m * 60000;
+            const E = [];
+            if (!back)
+              E.push([
+                "pre",
+                at(s.a - LEAD),
+                `⏰ ${n[0]} in ${LEAD} min`,
+                `${tm} · ${n[3]}`,
+              ]);
+            E.push([
+              "start",
+              at(s.a),
+              `▶ ${n[0]} has started`,
+              `${tm} · ${n[3]} · ends ${hm(s.b)}`,
+            ]);
+            E.push([
+              "preEnd",
+              at(s.b - LEAD),
+              `⌛ ${LEAD} min left: ${n[0]}`,
+              n[3] + (nn ? ` · next: ${nn[0]} at ${hm(nx.a)}` : ""),
+            ]);
+            if (!(nx && nx.a === s.b))
+              E.push([
+                "end",
+                at(s.b),
+                `✔ ${n[0]} ended`,
+                nn
+                  ? `Next: ${nn[0]} at ${hm(nx.a)} · ${nn[3]}`
+                  : "No more classes today.",
+              ]);
+            E.forEach(([t, ts, ti, bo]) => {
+              const key = `${day.getTime()}-${s.a}-${t}`;
+              if (AL[t] && ts > from && ts <= now && !done.has(key)) {
+                done.add(key);
+                show(ti, bo, key);
+              }
+            });
+          });
+        }
+      }
+      // start: load the routine, then phone view opens on today (or Sunday on weekends)
+      async function init() {
+        const j = await (await fetch("routine.json")).json();
+        S = j.subjects.map((s) => [s.name, s.glyph, s.hue, s.teacher]);
+        D = j.days;
+        R = j.slots;
+        T0 = j.start;
+        PL = j.period;
+        SL = R.map((r) =>
+          r.map(([p, n, k]) => ({
+            a: T0 + p * PL,
+            b: T0 + (p + n) * PL,
+            p,
+            n,
+            k,
+          })),
+        );
+        const dw = new Date().getDay();
+        tab = dw < 5 ? dw : 0;
+        legend();
+        build();
+        tabs();
+        agenda();
+        alerts();
+        tick();
+        setInterval(() => {
+          tick();
+          fire();
+        }, 1000);
+      }
+      init().catch(() => {
+        document.querySelector(".meta").textContent =
+          "Could not load the routine. Open the app once while online.";
+      });
+    </script>
+  </body>
+</html>
