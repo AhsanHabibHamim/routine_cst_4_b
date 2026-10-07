@@ -16,7 +16,12 @@ Open `https://<username>.github.io/<repo>/` once while online, then install it (
 
 ## 2. Alerts inside the app
 Tap **Enable alerts** in the app. It notifies before start, at start, before end and at end, with the teacher's name.
-These fire only while the app is open or still running in the background. Browsers cannot wake a closed static web app.
+They fire while the app is open, in a background tab, and (Android / installed PWA) when the app is minimised — the
+service worker + `notificationclick` handle the tap-to-open. A browser cannot wake a **closed** static web app, so for
+alerts with the phone locked use ntfy (section 3).
+
+iPhone/iOS: notifications only work from the installed Home Screen app (Share → Add to Home Screen) on iOS 16.4+,
+and the app must have been opened at least once after installing.
 
 ## 3. Alerts that always arrive (phone closed, screen off) — ntfy
 1. Install the free **ntfy** app (Android / iPhone) and subscribe to a long random topic, e.g. `cst-sem4-k8f3q9x2z7`.

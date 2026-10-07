@@ -1,0 +1,24 @@
+{
+  "id": "./",
+  "name": "CST Class Matrix — Sem 4",
+  "short_name": "CST Routine",
+  "description": "Offline class routine · Computer Technology · 4th Semester · Group B",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#070912",
+  "theme_color": "#070912",
+  "lang": "en",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Today's classes", "url": "./?view=today" },
+    { "name": "Full week", "url": "./?view=week" }
+  ]
+}
